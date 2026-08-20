@@ -1,12 +1,12 @@
-import { response } from "express";
+
 import User from "../model/UserModel.js"
 
 export const getUsers = async(req, res) => {
     try {
-        const response = await User.findAll();
-        res.status(200).json(response);
+        const users = await User.findAll();
+        res.status(200).json(users);
     } catch (error) {
-        console.log(Error.massage);
+        console.log(error.massage);
     }
 }
 

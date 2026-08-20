@@ -5,16 +5,18 @@ import { useNavigate } from 'react-router-dom';
 const AddUser = () => {
 const [Name, SetName] = useState("");
 const [Email, SetEmail] = useState("");
+const [Umur, SetUmur] = useState("");
 const [Gender, SetGender] = useState("Laki-laki");
 const navigate = useNavigate();
 
 const SaveUser = async (e) =>{
     e.preventDefault();
     try {
-        console.log("check", Name, Email, Gender);
+        console.log("check", Name, Email, Umur, Gender);
         await axios.post('http://localhost:5000/users', {
             name:Name,
             email:Email,
+            umur:Umur,
             gender:Gender
         });
         navigate("/");
@@ -48,6 +50,18 @@ const SaveUser = async (e) =>{
                         value={Email}
                         onChange={(e) => SetEmail(e.target.value)} 
                         placeholder='Email'
+                        />
+                    </div>
+                </div>
+                <div className="field">
+                    <label className="label">Umur</label>
+                    <div className="control">
+                        <input 
+                        type="teks" 
+                        className="input" 
+                        value={Umur}
+                        onChange={(e) => SetUmur(e.target.value)} 
+                        placeholder='Umur'
                         />
                     </div>
                 </div>

@@ -11,6 +11,7 @@ useEffect(()=>{
 
 const getUsers = async () =>{
     const response = await axios.get('http://localhost:5000/users');
+    console.log(response.data);
     setUser(response.data);
 }
 
@@ -33,6 +34,7 @@ const getUsers = async () =>{
                     <th>No</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Umur</th>
                     <th>Gender</th>
                     <th>Actions</th>
                 </tr>
@@ -43,6 +45,7 @@ const getUsers = async () =>{
                     <td>{index + 1}</td>
                     <td>{user.name}</td>
                     <td>{user.email}</td>
+                    <td>{user.umur}</td>
                     <td>{user.gender}</td>
                     <td>
                         <Link to={`edit/${user.id}`} className='button is-small is-info'>Edit</Link>

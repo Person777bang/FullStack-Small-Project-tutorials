@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 const EditUser = () => {
 const [Name, SetName] = useState("");
 const [Email, SetEmail] = useState("");
+const [Umur, SetUmur] = useState("");
 const [Gender, SetGender] = useState("Laki-laki");
 const navigate = useNavigate();
 const {id} = useParams();
@@ -19,6 +20,7 @@ const UpdateUser = async (e) =>{
         await axios.patch(`http://localhost:5000/users/${id}`, {
             name:Name,
             email:Email,
+            umur:Umur,
             gender:Gender
         });
         navigate("/");
@@ -31,6 +33,7 @@ const UpdateUser = async (e) =>{
         const response = await axios.get(`http://localhost:5000/users/${id}`);
         SetName(response.data.Name);
         SetEmail(response.data.Email);
+        SetUmur(response.data.Umur);
         SetGender(response.data.Gender);
     }
 
@@ -59,6 +62,18 @@ const UpdateUser = async (e) =>{
                         value={Email}
                         onChange={(e) => SetEmail(e.target.value)} 
                         placeholder='Email'
+                        />
+                    </div>
+                </div>
+                <div className="field">
+                    <label className="label">Umur</label>
+                    <div className="control">
+                        <input 
+                        type="text" 
+                        className="input" 
+                        value={Umur}
+                        onChange={(e) => SetUmur(e.target.value)} 
+                        placeholder='Umur'
                         />
                     </div>
                 </div>

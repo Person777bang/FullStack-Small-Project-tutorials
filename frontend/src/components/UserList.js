@@ -28,6 +28,7 @@ const getUsers = async () =>{
     <div className="columns mt-5 is-centered">
         <div className="column is-half">
             <Link to={`Add`} className='button is-success'>Add New</Link>
+            <Link to={`/products`} className='button is-info ml-2'>Add Product</Link>
         <table className="table is-striped is-fullwidth">
             <thead>
                 <tr>

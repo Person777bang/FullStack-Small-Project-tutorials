@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --cream-bg: #F7F2E9;
+  --cream-card: #FFFDF8;
+  --gold-accent: #B08D57;
+  --gold-dark: #8A6D3F;
+  --ink: #2E2A24;
+  --ink-soft: #6B6357;
+  --border-soft: #E5DCC8;
+}
+
+body {
+  background-color: var(--cream-bg);
+  background-image: radial-gradient(circle at 20% 20%, rgba(176,141,87,0.06) 0%, transparent 45%),
+                     radial-gradient(circle at 80% 80%, rgba(176,141,87,0.05) 0%, transparent 45%);
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  color: var(--ink);
+}
+
+.page-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
+  font-size: 2.4rem;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+  margin-bottom: 1.5rem;
+}
+
+.card-container {
+  background: var(--cream-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  padding: 2rem 2.2rem;
+  box-shadow: 0 8px 30px rgba(46, 42, 36, 0.08);
+}
+
+.btn-luxury {
+  background: var(--gold-accent) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  border-radius: 8px !important;
+  transition: background 0.2s ease;
+}
+
+.btn-luxury:hover {
+  background: var(--gold-dark) !important;
+}
+
+.btn-outline-luxury {
+  background: transparent !important;
+  border: 1.5px solid var(--gold-accent) !important;
+  color: var(--gold-dark) !important;
+  border-radius: 8px !important;
+  font-weight: 500;
+}
+
+.btn-outline-luxury:hover {
+  background: var(--gold-accent) !important;
+  color: #fff !important;
+}
+
+.table-luxury {
+  background: transparent !important;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table-luxury thead th {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-soft);
+  border-bottom: 2px solid var(--gold-accent) !important;
+  padding-bottom: 0.9rem;
+  background: transparent !important;
+}
+
+.table-luxury tbody tr {
+  transition: background 0.15s ease;
+}
+
+.table-luxury tbody tr:hover {
+  background: rgba(176, 141, 87, 0.06);
+}
+
+.table-luxury tbody td {
+  padding: 0.9rem 0.75rem;
+  border-bottom: 1px solid var(--border-soft) !important;
+  color: var(--ink);
+  vertical-align: middle;
+}
+
+.action-btn {
+  border-radius: 6px !important;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.9rem !important;
+  height: auto !important;
+}

@@ -19,14 +19,14 @@ export const getProducts = async (req, res) => {
 export const createProduct = async (req, res) => {
     const { name, price, stock, categoryId } = req.body;
 
-    // 1. Semua field wajib diisi
+    // Semua field wajib diisi
     if (!name || price === undefined || stock === undefined || !categoryId) {
-        return res.status(400).json({ msg: "Semua field wajib diisi" });
+        return res.status(400).json({ msg: "Semua wajib di isi" });
     }
 
     // 2. Harga dan stock tidak boleh negatif
     if (price < 0 || stock < 0) {
-        return res.status(400).json({ msg: "Harga dan stock tidak boleh negatif" });
+        return res.status(400).json({ msg: "Maaf Tidak Boleh Negatif" });
     }
 
     try {

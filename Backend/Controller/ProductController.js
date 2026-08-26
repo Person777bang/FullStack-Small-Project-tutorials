@@ -16,6 +16,20 @@ export const getProducts = async (req, res) => {
     }
 }
 
+
+export const getProductById = async(req, res) => {
+    try {
+        const response = await Product.findOne({
+            where: {
+                id: req.params.id
+            }
+        });
+        res.status(200).json(response);
+    } catch (error) {
+        console.log(Error.massage);
+    }
+}
+
 export const createProduct = async (req, res) => {
     const { name, price, stock, categoryId } = req.body;
 
@@ -49,6 +63,21 @@ export const getCategories = async (req, res) => {
     try {
         const categories = await ProductCategory.findAll();
         res.status(200).json(categories);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    }
+}
+
+
+export const deleteProduct = async (req, res) => {
+    try {
+        const product = await Product.findOne({ where: { id: req.params.id } });
+        if (!product) {
+            return res.status(404).json({ msg: "Product tidak ditemukan" });
+        }
+        await Product.destroy({ where: { id: req.params.id } });
+        res.status(200).json({ msg: "Product berhasil dihapus" });
     } catch (error) {
         console.log(error.message);
         res.status(500).json({ msg: "Terjadi kesalahan pada server" });

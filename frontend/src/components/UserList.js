@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import axios from "axios";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const UserList = () => {
 const [users, setUser] = useState([]);
- 
+const navigate = useNavigate();
+
 useEffect(()=>{
     getUsers();
 },[]);
@@ -24,15 +25,24 @@ const getUsers = async () =>{
         }
     }
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('account');
+        navigate('/login');
+    }
+
   return (
     <div className="columns mt-6 is-centered">
         <div className="column is-two-thirds">
             <h1 className="page-title">Data Pengguna</h1>
 
             <div className="card-container">
-                <div className="mb-4">
-                    <Link to={`/add`} className='button btn-luxury mr-2'>+ Add New</Link>
-                    <Link to={`/products`} className='button btn-outline-luxury'>Product List</Link>
+                <div className="mb-4 is-flex is-justify-content-space-between is-align-items-center">
+                    <div>
+                        <Link to={`/add`} className='button btn-luxury mr-2'>+ Add New</Link>
+                        <Link to={`/products`} className='button btn-outline-luxury'>Product List</Link>
+                    </div>
+                    <button onClick={handleLogout} className='button is-danger'>Logout</button>
                 </div>
 
                 <table className="table is-fullwidth table-luxury">

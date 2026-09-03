@@ -1,6 +1,7 @@
 import Account from "../model/AccountModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import 'dotenv/config';
 
 
 export const register = async (req, res) => {
@@ -55,7 +56,7 @@ export const login = async (req, res) => {
 
         const token = jwt.sign(
             { id: account.id, name: account.name, email: account.email },
-            JWT_SECRET,
+            process.env.JWT_SECRET,
             { expiresIn: '1d' }
         );
 

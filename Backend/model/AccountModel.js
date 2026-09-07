@@ -23,3 +23,4 @@ const Account = db.define('Accounts', {
 });
 
 export default Account;
+

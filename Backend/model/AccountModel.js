@@ -1,5 +1,7 @@
-import { DataTypes } from "sequelize";
+import { Sequelize } from "sequelize";
 import db from "../config/Database.js";
+
+const { DataTypes } = Sequelize;
 
 const Account = db.define('Accounts', {
     name: {
@@ -17,10 +19,14 @@ const Account = db.define('Accounts', {
     password: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    role: {
+        type: DataTypes.ENUM('admin', 'user'),
+        allowNull: false,
+        defaultValue: 'user'
     }
 }, {
     freezeTableName: true
 });
 
 export default Account;
-

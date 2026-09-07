@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const UserList = () => {
 const [users, setUser] = useState([]);
+const [msg, setMsg] = useState('');
 const navigate = useNavigate();
 
 useEffect(()=>{
@@ -11,16 +12,36 @@ useEffect(()=>{
 },[]);
 
 const getUsers = async () =>{
-    const response = await axios.get('http://localhost:5000/users');
-    console.log(response.data);
-    setUser(response.data);
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:5000/users', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        console.log(response.data);
+        setUser(response.data);
+    } catch (error) {
+        if (error.response) {
+            setMsg(error.response.data.msg);
+        }
+        console.log(error);
+    }
 }
 
     const deleteUser = async (id) =>{
         try {
-            await axios.delete(`http://localhost:5000/users/${id}`);
+            const token = localStorage.getItem('token');
+            await axios.delete(`http://localhost:5000/users/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             getUsers();
         } catch (error) {
+            if (error.response) {
+                setMsg(error.response.data.msg);
+            }
             console.log(error);
         }
     }
@@ -44,6 +65,8 @@ const getUsers = async () =>{
                     </div>
                     <button onClick={handleLogout} className='button is-danger'>Logout</button>
                 </div>
+
+                <p className="has-text-danger">{msg}</p>
 
                 <table className="table is-fullwidth table-luxury">
                     <thead>

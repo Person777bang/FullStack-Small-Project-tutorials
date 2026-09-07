@@ -1,7 +1,6 @@
 import Account from "../model/AccountModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import 'dotenv/config';
 
 
 export const register = async (req, res) => {
@@ -26,10 +25,44 @@ export const register = async (req, res) => {
         await Account.create({
             name,
             email,
-            password: hashPassword
+            password: hashPassword,
+            role: 'user'
         });
 
         res.status(201).json({ msg: "Registrasi berhasil, silakan login" });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    }
+}
+
+    export const registerAdmin = async (req, res) => {
+    const { name, email, password, confirmPassword } = req.body;
+
+    if (!name || !email || !password || !confirmPassword) {
+        return res.status(400).json({ msg: "Semua field wajib diisi" });
+    }
+
+    if (password !== confirmPassword) {
+        return res.status(400).json({ msg: "Password dan konfirmasi password tidak cocok" });
+    }
+
+    try {
+        const existingAccount = await Account.findOne({ where: { email } });
+        if (existingAccount) {
+            return res.status(400).json({ msg: "Email sudah terdaftar" });
+        }
+
+         const hashPassword = await bcrypt.hash(password, 10);
+
+        await Account.create({
+            name,
+            email,
+            password: hashPassword,
+            role: 'admin'
+        });
+
+        res.status(201).json({ msg: "Akun admin berhasil dibuat" });
     } catch (error) {
         console.log(error.message);
         res.status(500).json({ msg: "Terjadi kesalahan pada server" });
@@ -55,7 +88,7 @@ export const login = async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: account.id, name: account.name, email: account.email },
+            { id: account.id, name: account.name, email: account.email, role: account.role },
             process.env.JWT_SECRET,
             { expiresIn: '1d' }
         );
@@ -63,7 +96,7 @@ export const login = async (req, res) => {
         res.status(200).json({
             msg: "Login berhasil",
             token,
-            account: { id: account.id, name: account.name, email: account.email }
+            account: { id: account.id, name: account.name, email: account.email, role: account.role }
         });
     } catch (error) {
         console.log(error.message);

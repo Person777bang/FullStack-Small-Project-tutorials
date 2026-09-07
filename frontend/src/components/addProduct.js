@@ -16,9 +16,22 @@ const AddProduct = () => {
     }, []);
 
     const getCategories = async () => {
-        const response = await axios.get('http://localhost:5000/categories');
+        try {
+            const token = localStorage.getItem('token');
+             const response = await axios.get('http://localhost:5000/categories', {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+             });
         setCategories(response.data);
+        } catch (error) {
+            if (error.response) {
+                setMsg(error.response.data.msg);
+            }
+        }
+       
     }
+
 
    const saveProduct = async (e) => {
     e.preventDefault();
@@ -29,11 +42,16 @@ const AddProduct = () => {
     }
 
     try {
+        const token = localStorage.getItem('token')
         await axios.post('http://localhost:5000/products', {
             name: name,
             price: price,
             stock: stock,
             categoryId: categoryId
+        }, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         });
         navigate('/products');
     } catch (error) {

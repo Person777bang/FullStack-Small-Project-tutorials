@@ -62,6 +62,7 @@ const getUsers = async () =>{
                     <div>
                         <Link to={`/add`} className='button btn-luxury mr-2'>+ Add New</Link>
                         <Link to={`/products`} className='button btn-outline-luxury'>Product List</Link>
+                        <Link to={`/addresses`} className='button btn-outline-luxury'>Alamat Saya</Link>
                     </div>
                     <button onClick={handleLogout} className='button is-danger'>Logout</button>
                 </div>

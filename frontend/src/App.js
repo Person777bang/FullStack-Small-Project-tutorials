@@ -4,6 +4,8 @@ import AddUser from "./components/addUser";
 import EditUser from "./components/EditUser";
 import AddProduct from "./components/AddProduct";
 import ProductList from "./components/ProductList";
+import AddAddress from "./components/AddAddress";
+import AddressList from "./components/AddressList";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import PrivateRoute from "./components/PrivateRoute";
@@ -31,6 +33,12 @@ function App() {
         } />
         <Route path="/products/add" element={
           <PrivateRoute><AddProduct /></PrivateRoute>
+        } />
+        <Route path="/addresses" element={
+          <PrivateRoute><AddressList /></PrivateRoute>
+        } />
+        <Route path="/addresses/add" element={
+          <PrivateRoute><AddAddress /></PrivateRoute>
         } />
       </Routes>
     </BrowserRouter>

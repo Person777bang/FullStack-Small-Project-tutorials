@@ -9,9 +9,9 @@ const Account = db.define('Accounts', {
         allowNull: false
     },
     email: {
-        type: DataTypes.STRING,
+         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
+        unique: 'unique_account_email',
         validate: {
             isEmail: true
         }

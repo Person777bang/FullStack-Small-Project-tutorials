@@ -5,7 +5,7 @@ const ProductCategory = db.define('ProductCategories', {
     name: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true
+        unique: 'unique_category_name'
     }
 }, {
     freezeTableName: true

@@ -169,3 +169,19 @@ body {
     padding: 0.4rem 0.8rem;
     height: auto;
 }
+
+.search-input-compact {
+    width: 220px;
+    background-color: #ffffff;
+    border: 1px solid #d9cfc0;
+    color: #333;
+}
+
+.search-input-compact::placeholder {
+    color: #999;
+}
+
+.search-input-compact:focus {
+    border-color: #b08d57;
+    box-shadow: 0 0 0 1px #b08d57;
+}

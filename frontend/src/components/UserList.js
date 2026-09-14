@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const UserList = () => {
 const [users, setUser] = useState([]);
+const [search, setSearch] = useState('');
 const [msg, setMsg] = useState('');
 const navigate = useNavigate();
 
@@ -52,6 +53,11 @@ const getUsers = async () =>{
         navigate('/login');
     }
 
+    const filteredUsers = users.filter((user) =>
+        user.name.toLowerCase().includes(search.toLowerCase()) ||
+        user.email.toLowerCase().includes(search.toLowerCase())
+    );
+
   return (
     <div className="columns mt-6 is-centered">
         <div className="column is-two-thirds">
@@ -61,10 +67,20 @@ const getUsers = async () =>{
                 <div className="mb-4 is-flex is-justify-content-space-between is-align-items-center">
                     <div>
                         <Link to={`/add`} className='button btn-luxury mr-2'>+ Add New</Link>
-                        <Link to={`/products`} className='button btn-outline-luxury'>Product List</Link>
+                        <Link to={`/products`} className='button btn-outline-luxury mr-2'>Product List</Link>
                         <Link to={`/addresses`} className='button btn-outline-luxury'>Alamat Saya</Link>
                     </div>
-                    <button onClick={handleLogout} className='button is-danger'>Logout</button>
+
+                    <div className="is-flex is-align-items-center">
+                        <input
+                            type="text"
+                            className="input search-input-compact mr-3"
+                            placeholder="Cari nama/email..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                        <button onClick={handleLogout} className='button is-danger'>Logout</button>
+                    </div>
                 </div>
 
                 <p className="has-text-danger">{msg}</p>
@@ -81,7 +97,12 @@ const getUsers = async () =>{
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user, index) => (
+                        {filteredUsers.length === 0 && (
+                            <tr>
+                                <td colSpan="6" className="has-text-centered">Tidak ada data ditemukan</td>
+                            </tr>
+                        )}
+                        {filteredUsers.map((user, index) => (
                             <tr key={user.id}>
                                 <td>{index + 1}</td>
                                 <td>{user.name}</td>

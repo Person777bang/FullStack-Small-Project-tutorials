@@ -6,6 +6,8 @@ const UserList = () => {
   const [users, setUser] = useState([]);
   const [search, setSearch] = useState("");
   const [msg, setMsg] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -59,6 +61,19 @@ const UserList = () => {
       user.email.toLowerCase().includes(search.toLowerCase()),
   );
 
+  // Hitung total halaman dan potong data sesuai halaman aktif
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedUsers = filteredUsers.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
+
+  // Reset ke halaman 1 setiap kali search berubah
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
   return (
     <div className="columns mt-6 is-centered">
       <div className="column is-two-thirds">
@@ -106,16 +121,16 @@ const UserList = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.length === 0 && (
+              {paginatedUsers.length === 0 && (
                 <tr>
                   <td colSpan="6" className="has-text-centered">
                     Tidak ada data ditemukan
                   </td>
                 </tr>
               )}
-              {filteredUsers.map((user, index) => (
+              {paginatedUsers.map((user, index) => (
                 <tr key={user.id}>
-                  <td>{index + 1}</td>
+                  <td>{startIndex + index + 1}</td>
                   <td>{user.name}</td>
                   <td>{user.email}</td>
                   <td>{user.umur}</td>
@@ -138,6 +153,30 @@ const UserList = () => {
               ))}
             </tbody>
           </table>
+
+          {totalPages > 1 && (
+            <div className="is-flex is-justify-content-center is-align-items-center mt-4">
+              <button
+                className="button btn-outline-luxury mr-2"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(currentPage - 1)}
+              >
+                Sebelumnya
+              </button>
+
+              <span className="mx-3">
+                Halaman {currentPage} dari {totalPages}
+              </span>
+
+              <button
+                className="button btn-outline-luxury ml-2"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage(currentPage + 1)}
+              >
+                Selanjutnya
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

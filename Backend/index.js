@@ -3,15 +3,15 @@ import cors from "cors";
 import UserRoute from "./routes/UserRoute.js";
 import ProductRoute from "./routes/ProductRoute.js";
 import AuthRoute from "./routes/AuthRoute.js";
-import Account from "./model/AccountModel.js"
+import Account from "./model/AccountModel.js";
 import db from "./config/Database.js";
 import "dotenv/config";
-import User from "./model/UserModel.js"
+import User from "./model/UserModel.js";
 import Address from "./model/Address.js";
 import AddressRoute from "./routes/AddressRoute.js";
 
 (async () => {
-    await db.sync({ alter: true });
+  await db.sync({ alter: true });
 })();
 
 const app = express();
@@ -23,4 +23,4 @@ app.use(ProductRoute);
 app.use(AuthRoute);
 app.use(AddressRoute);
 
-app.listen(5000, () => console.log('Server up and running...'));
+app.listen(5000, () => console.log("Server up and running..."));

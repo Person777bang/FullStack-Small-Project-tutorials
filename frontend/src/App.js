@@ -19,30 +19,65 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         {/* Halaman yang wajib login dulu */}
-        <Route path="/" element={
-          <PrivateRoute><UserList /></PrivateRoute>
-        } />
-        <Route path="/add" element={
-          <PrivateRoute><AddUser /></PrivateRoute>
-        } />
-        <Route path="edit/:id" element={
-          <PrivateRoute><EditUser /></PrivateRoute>
-        } />
-        <Route path="/products" element={
-          <PrivateRoute><ProductList /></PrivateRoute>
-        } />
-        <Route path="/products/add" element={
-          <PrivateRoute><AddProduct /></PrivateRoute>
-        } />
-        <Route path="/addresses" element={
-          <PrivateRoute><AddressList /></PrivateRoute>
-        } />
-        <Route path="/addresses/add" element={
-          <PrivateRoute><AddAddress /></PrivateRoute>
-        } />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <UserList />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/add"
+          element={
+            <PrivateRoute>
+              <AddUser />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="edit/:id"
+          element={
+            <PrivateRoute>
+              <EditUser />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/products"
+          element={
+            <PrivateRoute>
+              <ProductList />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/products/add"
+          element={
+            <PrivateRoute>
+              <AddProduct />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/addresses"
+          element={
+            <PrivateRoute>
+              <AddressList />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/addresses/add"
+          element={
+            <PrivateRoute>
+              <AddAddress />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
-};
+}
 
 export default App;

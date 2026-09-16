@@ -1,26 +1,35 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
 
 :root {
-  --cream-bg: #F7F2E9;
-  --cream-card: #FFFDF8;
-  --gold-accent: #B08D57;
-  --gold-dark: #8A6D3F;
-  --ink: #2E2A24;
-  --ink-soft: #6B6357;
-  --border-soft: #E5DCC8;
+  --cream-bg: #f7f2e9;
+  --cream-card: #fffdf8;
+  --gold-accent: #b08d57;
+  --gold-dark: #8a6d3f;
+  --ink: #2e2a24;
+  --ink-soft: #6b6357;
+  --border-soft: #e5dcc8;
 }
 
 body {
   background-color: var(--cream-bg);
-  background-image: radial-gradient(circle at 20% 20%, rgba(176,141,87,0.06) 0%, transparent 45%),
-                     radial-gradient(circle at 80% 80%, rgba(176,141,87,0.05) 0%, transparent 45%);
+  background-image:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(176, 141, 87, 0.06) 0%,
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(176, 141, 87, 0.05) 0%,
+      transparent 45%
+    );
   min-height: 100vh;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   color: var(--ink);
 }
 
 .page-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: "Cormorant Garamond", serif;
   font-weight: 700;
   font-size: 2.4rem;
   color: var(--ink);
@@ -70,7 +79,7 @@ body {
 }
 
 .table-luxury thead th {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -103,85 +112,87 @@ body {
 }
 
 .address-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.25rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
 }
 
 .address-card {
-    position: relative;
-    background: #fff;
-    border: 1px solid #e0d8c8;
-    border-radius: 12px;
-    padding: 1.25rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
+  background: #fff;
+  border: 1px solid #e0d8c8;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .address-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .address-card-active {
-    border-color: #b08d57;
-    background: #fdf9f2;
+  border-color: #b08d57;
+  background: #fdf9f2;
 }
 
 .address-badge {
-    position: absolute;
-    top: -10px;
-    right: 12px;
-    background: #b08d57;
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 999px;
-    letter-spacing: 0.5px;
+  position: absolute;
+  top: -10px;
+  right: 12px;
+  background: #b08d57;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.5px;
 }
 
 .address-label {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 0.25rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
 }
 
 .address-name {
-    font-size: 0.9rem;
-    color: #6b6b6b;
-    margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: #6b6b6b;
+  margin-bottom: 0.5rem;
 }
 
 .address-detail {
-    font-size: 0.9rem;
-    color: #333;
-    line-height: 1.4;
+  font-size: 0.9rem;
+  color: #333;
+  line-height: 1.4;
 }
 
 .address-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
 .action-btn {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
-    height: auto;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.8rem;
+  height: auto;
 }
 
 .search-input-compact {
-    width: 220px;
-    background-color: #ffffff;
-    border: 1px solid #d9cfc0;
-    color: #333;
+  width: 220px;
+  background-color: #ffffff;
+  border: 1px solid #d9cfc0;
+  color: #333;
 }
 
 .search-input-compact::placeholder {
-    color: #999;
+  color: #999;
 }
 
 .search-input-compact:focus {
-    border-color: #b08d57;
-    box-shadow: 0 0 0 1px #b08d57;
+  border-color: #b08d57;
+  box-shadow: 0 0 0 1px #b08d57;
 }

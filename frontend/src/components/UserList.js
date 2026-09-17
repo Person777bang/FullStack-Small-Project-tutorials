@@ -11,18 +11,25 @@ const UserList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getUsers();
-  }, []);
+    const delayDebounceFn = setTimeout(() => {
+      getUsers();
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [search]);
 
   const getUsers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:5000/users", {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      // Kirim parameter search_query ke backend Express
+      const response = await axios.get(
+        `http://localhost:5000/users?search_query=${encodeURIComponent(search)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      });
-      console.log(response.data);
+      );
       setUser(response.data);
     } catch (error) {
       if (error.response) {
@@ -55,21 +62,12 @@ const UserList = () => {
     navigate("/login");
   };
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.name.toLowerCase().includes(search.toLowerCase()) ||
-      user.email.toLowerCase().includes(search.toLowerCase()),
-  );
-
-  // Hitung total halaman dan potong data sesuai halaman aktif
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  // Karena data terfilter sudah dikirim dari Backend, potong langsung dari state 'users'
+  const totalPages = Math.ceil(users.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedUsers = filteredUsers.slice(
-    startIndex,
-    startIndex + itemsPerPage,
-  );
+  const paginatedUsers = users.slice(startIndex, startIndex + itemsPerPage);
 
-  // Reset ke halaman 1 setiap kali search berubah
+  // Reset ke halaman 1 setiap kali kata kunci pencarian berubah
   useEffect(() => {
     setCurrentPage(1);
   }, [search]);
@@ -182,4 +180,5 @@ const UserList = () => {
     </div>
   );
 };
+
 export default UserList;

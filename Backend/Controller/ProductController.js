@@ -1,17 +1,33 @@
 import Product from "../model/ProductModel.js";
 import ProductCategory from "../model/ProductCategoryModel.js";
+import { Op } from "sequelize";
 
 export const getProducts = async (req, res) => {
+  const search = req.query.search_query || "";
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+
   try {
-    const products = await Product.findAll({
+    const { count, rows } = await Product.findAndCountAll({
+      where: {
+        name: { [Op.like]: `%${search}%` },
+      },
       include: [
         {
           model: ProductCategory,
           attributes: ["id", "name"],
         },
       ],
+      limit,
+      offset,
     });
-    res.status(200).json(products);
+
+    res.status(200).json({
+      products: rows,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ msg: "Terjadi kesalahan pada server" });

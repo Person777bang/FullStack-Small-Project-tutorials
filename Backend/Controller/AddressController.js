@@ -1,12 +1,32 @@
 import Address from "../model/Address.js";
+import { Op } from "sequelize";
 
 // Ambil semua alamat milik user yang sedang login
 export const getMyAddresses = async (req, res) => {
+  const search = req.query.search_query || "";
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
+
   try {
-    const addresses = await Address.findAll({
-      where: { userId: req.account.id },
+    const { count, rows } = await Address.findAndCountAll({
+      where: {
+        userId: req.account.id,
+        [Op.or]: [
+          { label: { [Op.like]: `%${search}%` } },
+          { recipientName: { [Op.like]: `%${search}%` } },
+          { city: { [Op.like]: `%${search}%` } },
+        ],
+      },
+      limit,
+      offset,
     });
-    res.status(200).json(addresses);
+
+    res.status(200).json({
+      addresses: rows,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ msg: "Terjadi kesalahan pada server" });

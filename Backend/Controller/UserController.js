@@ -2,11 +2,13 @@ import User from "../model/UserModel.js";
 import { Op } from "sequelize";
 
 export const getUsers = async (req, res) => {
-  // Tangkap query string ?search_query=... dari URL
   const search = req.query.search_query || "";
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
 
   try {
-    const users = await User.findAll({
+    const { count, rows } = await User.findAndCountAll({
       where: {
         [Op.or]: [
           {
@@ -21,8 +23,15 @@ export const getUsers = async (req, res) => {
           },
         ],
       },
+      limit,
+      offset,
     });
-    res.status(200).json(users);
+
+    res.status(200).json({
+      users: rows,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ msg: "Terjadi kesalahan pada server" });

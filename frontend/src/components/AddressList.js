@@ -4,19 +4,34 @@ import { Link } from "react-router-dom";
 
 const AddressList = () => {
   const [addresses, setAddresses] = useState([]);
+  const [search, setSearch] = useState("");
   const [msg, setMsg] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
-    getAddresses();
-  }, []);
+    const delayDebounceFn = setTimeout(() => {
+      getAddresses();
+    }, 300);
+    return () => clearTimeout(delayDebounceFn);
+  }, [search, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   const getAddresses = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get("http://localhost:5000/addresses", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setAddresses(response.data);
+      const response = await axios.get(
+        `http://localhost:5000/addresses?search_query=${encodeURIComponent(search)}&page=${currentPage}&limit=${itemsPerPage}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      setAddresses(response.data.addresses);
+      setTotalPages(response.data.totalPages);
     } catch (error) {
       if (error.response) setMsg(error.response.data.msg);
     }
@@ -55,9 +70,18 @@ const AddressList = () => {
       <div className="column is-two-thirds">
         <div className="is-flex is-justify-content-space-between is-align-items-center mb-4">
           <h1 className="page-title">Alamat Saya</h1>
-          <Link to={`/addresses/add`} className="button btn-luxury">
-            + Tambah Alamat
-          </Link>
+          <div className="is-flex is-align-items-center">
+            <input
+              type="text"
+              className="input search-input-compact mr-3"
+              placeholder="Cari label/kota/nama..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <Link to={`/addresses/add`} className="button btn-luxury">
+              + Tambah Alamat
+            </Link>
+          </div>
         </div>
 
         <p className="has-text-danger">{msg}</p>
@@ -113,6 +137,28 @@ const AddressList = () => {
             </div>
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="is-flex is-justify-content-center is-align-items-center mt-4">
+            <button
+              className="button btn-outline-luxury mr-2"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              Sebelumnya
+            </button>
+            <span className="mx-3">
+              Halaman {currentPage} dari {totalPages}
+            </span>
+            <button
+              className="button btn-outline-luxury ml-2"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              Selanjutnya
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

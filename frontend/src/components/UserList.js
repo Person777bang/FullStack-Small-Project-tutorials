@@ -7,6 +7,7 @@ const UserList = () => {
   const [search, setSearch] = useState("");
   const [msg, setMsg] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 10;
   const navigate = useNavigate();
 
@@ -14,23 +15,24 @@ const UserList = () => {
     const delayDebounceFn = setTimeout(() => {
       getUsers();
     }, 300);
-
     return () => clearTimeout(delayDebounceFn);
+  }, [search, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
   }, [search]);
 
   const getUsers = async () => {
     try {
       const token = localStorage.getItem("token");
-      // Kirim parameter search_query ke backend Express
       const response = await axios.get(
-        `http://localhost:5000/users?search_query=${encodeURIComponent(search)}`,
+        `http://localhost:5000/users?search_query=${encodeURIComponent(search)}&page=${currentPage}&limit=${itemsPerPage}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         },
       );
-      setUser(response.data);
+      setUser(response.data.users);
+      setTotalPages(response.data.totalPages);
     } catch (error) {
       if (error.response) {
         setMsg(error.response.data.msg);
@@ -43,9 +45,7 @@ const UserList = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.delete(`http://localhost:5000/users/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       getUsers();
     } catch (error) {
@@ -61,16 +61,6 @@ const UserList = () => {
     localStorage.removeItem("account");
     navigate("/login");
   };
-
-  // Karena data terfilter sudah dikirim dari Backend, potong langsung dari state 'users'
-  const totalPages = Math.ceil(users.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedUsers = users.slice(startIndex, startIndex + itemsPerPage);
-
-  // Reset ke halaman 1 setiap kali kata kunci pencarian berubah
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [search]);
 
   return (
     <div className="columns mt-6 is-centered">
@@ -119,16 +109,16 @@ const UserList = () => {
               </tr>
             </thead>
             <tbody>
-              {paginatedUsers.length === 0 && (
+              {users.length === 0 && (
                 <tr>
                   <td colSpan="6" className="has-text-centered">
                     Tidak ada data ditemukan
                   </td>
                 </tr>
               )}
-              {paginatedUsers.map((user, index) => (
+              {users.map((user, index) => (
                 <tr key={user.id}>
-                  <td>{startIndex + index + 1}</td>
+                  <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                   <td>{user.name}</td>
                   <td>{user.email}</td>
                   <td>{user.umur}</td>
@@ -161,11 +151,9 @@ const UserList = () => {
               >
                 Sebelumnya
               </button>
-
               <span className="mx-3">
                 Halaman {currentPage} dari {totalPages}
               </span>
-
               <button
                 className="button btn-outline-luxury ml-2"
                 disabled={currentPage === totalPages}

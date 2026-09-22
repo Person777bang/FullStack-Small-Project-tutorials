@@ -23,4 +23,9 @@ app.use(ProductRoute);
 app.use(AuthRoute);
 app.use(AddressRoute);
 
+app.use((error, req, res, next) => {
+  console.log(error.message);
+  res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+});
+
 app.listen(5000, () => console.log("Server up and running..."));

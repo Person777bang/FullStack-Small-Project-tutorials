@@ -1,8 +1,7 @@
 import Address from "../model/Address.js";
 import { Op } from "sequelize";
 
-// Ambil semua alamat milik user yang sedang login
-export const getMyAddresses = async (req, res) => {
+export const getMyAddresses = async (req, res, next) => {
   const search = req.query.search_query || "";
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
@@ -28,12 +27,11 @@ export const getMyAddresses = async (req, res) => {
       currentPage: page,
     });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    next(error);
   }
 };
 
-export const createAddress = async (req, res) => {
+export const createAddress = async (req, res, next) => {
   const {
     label,
     recipientName,
@@ -68,13 +66,11 @@ export const createAddress = async (req, res) => {
     });
     res.status(201).json({ msg: "Alamat berhasil ditambahkan" });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    next(error);
   }
 };
 
-// Update alamat (hanya boleh milik sendiri)
-export const updateAddress = async (req, res) => {
+export const updateAddress = async (req, res, next) => {
   try {
     const address = await Address.findOne({ where: { id: req.params.id } });
     if (!address)
@@ -89,13 +85,11 @@ export const updateAddress = async (req, res) => {
     await Address.update(req.body, { where: { id: req.params.id } });
     res.status(200).json({ msg: "Alamat berhasil diperbarui" });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    next(error);
   }
 };
 
-// Hapus alamat (hanya boleh milik sendiri)
-export const deleteAddress = async (req, res) => {
+export const deleteAddress = async (req, res, next) => {
   try {
     const address = await Address.findOne({ where: { id: req.params.id } });
     if (!address)
@@ -110,13 +104,11 @@ export const deleteAddress = async (req, res) => {
     await Address.destroy({ where: { id: req.params.id } });
     res.status(200).json({ msg: "Alamat berhasil dihapus" });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    next(error);
   }
 };
 
-// Set salah satu alamat jadi alamat utama/aktif
-export const setPrimaryAddress = async (req, res) => {
+export const setPrimaryAddress = async (req, res, next) => {
   try {
     const address = await Address.findOne({ where: { id: req.params.id } });
     if (!address)
@@ -128,18 +120,14 @@ export const setPrimaryAddress = async (req, res) => {
         .json({ msg: "Kamu tidak punya akses ke alamat ini" });
     }
 
-    // Matikan status utama di semua alamat milik user ini dulu
     await Address.update(
       { isPrimary: false },
       { where: { userId: req.account.id } },
     );
-
-    // Jadikan alamat yang dipilih sebagai utama
     await Address.update({ isPrimary: true }, { where: { id: req.params.id } });
 
     res.status(200).json({ msg: "Alamat utama berhasil diperbarui" });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    next(error);
   }
 };

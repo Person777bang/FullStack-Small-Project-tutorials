@@ -2,7 +2,7 @@ import Account from "../model/AccountModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const register = async (req, res) => {
+export const register = async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
 
   if (!name || !email || !password || !confirmPassword) {
@@ -23,21 +23,15 @@ export const register = async (req, res) => {
 
     const hashPassword = await bcrypt.hash(password, 10);
 
-    await Account.create({
-      name,
-      email,
-      password: hashPassword,
-      role: "user",
-    });
+    await Account.create({ name, email, password: hashPassword, role: "user" });
 
     res.status(201).json({ msg: "Registrasi berhasil, silakan login" });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    next(error);
   }
 };
 
-export const registerAdmin = async (req, res) => {
+export const registerAdmin = async (req, res, next) => {
   const { name, email, password, confirmPassword } = req.body;
 
   if (!name || !email || !password || !confirmPassword) {
@@ -67,12 +61,11 @@ export const registerAdmin = async (req, res) => {
 
     res.status(201).json({ msg: "Akun admin berhasil dibuat" });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    next(error);
   }
 };
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -112,7 +105,6 @@ export const login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    next(error);
   }
 };

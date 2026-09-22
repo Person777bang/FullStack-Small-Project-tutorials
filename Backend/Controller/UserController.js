@@ -1,7 +1,7 @@
 import User from "../model/UserModel.js";
 import { Op } from "sequelize";
 
-export const getUsers = async (req, res) => {
+export const getUsers = async (req, res, next) => {
   const search = req.query.search_query || "";
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
@@ -11,16 +11,8 @@ export const getUsers = async (req, res) => {
     const { count, rows } = await User.findAndCountAll({
       where: {
         [Op.or]: [
-          {
-            name: {
-              [Op.like]: `%${search}%`,
-            },
-          },
-          {
-            email: {
-              [Op.like]: `%${search}%`,
-            },
-          },
+          { name: { [Op.like]: `%${search}%` } },
+          { email: { [Op.like]: `%${search}%` } },
         ],
       },
       limit,
@@ -33,61 +25,42 @@ export const getUsers = async (req, res) => {
       currentPage: page,
     });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    next(error);
   }
 };
 
-export const getUsersById = async (req, res) => {
+export const getUsersById = async (req, res, next) => {
   try {
-    const response = await User.findOne({
-      where: {
-        id: req.params.id,
-      },
-    });
+    const response = await User.findOne({ where: { id: req.params.id } });
     res.status(200).json(response);
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    next(error);
   }
 };
 
-export const createUser = async (req, res) => {
-  console.log(req.body);
+export const createUser = async (req, res, next) => {
   try {
     await User.create(req.body);
     res.status(201).json({ msg: "User Created" });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    next(error);
   }
 };
 
-export const updateUser = async (req, res) => {
+export const updateUser = async (req, res, next) => {
   try {
-    await User.update(req.body, {
-      where: {
-        id: req.params.id,
-      },
-    });
+    await User.update(req.body, { where: { id: req.params.id } });
     res.status(200).json({ msg: "User Updated" });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    next(error);
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteUser = async (req, res, next) => {
   try {
-    // Di Sequelize, menghapus data menggunakan destroy, bukan delete
-    await User.destroy({
-      where: {
-        id: req.params.id,
-      },
-    });
+    await User.destroy({ where: { id: req.params.id } });
     res.status(200).json({ msg: "User Deleted" });
   } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ msg: "Terjadi kesalahan pada server" });
+    next(error);
   }
 };

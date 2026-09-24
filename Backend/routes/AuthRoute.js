@@ -7,7 +7,7 @@ import {
 import { verifyToken } from "../middleware/verifyToken.js";
 import { verifyAdmin } from "../middleware/verifyAdmin.js";
 import { validate } from "../middleware/Validate.js";
-import { registerRules, loginRules } from "../Validator/AuthValidator.js";
+import { registerRules, loginRules } from "../middleware/AuthValidator.js";
 
 const router = express.Router();
 

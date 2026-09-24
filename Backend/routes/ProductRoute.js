@@ -2,7 +2,7 @@ import express from "express";
 import { verifyToken } from "../middleware/verifyToken.js";
 import { verifyAdmin } from "../middleware/verifyAdmin.js";
 import { validate } from "../middleware/Validate.js";
-import { productRules } from "../Validator/ProductValidator.js";
+import { productRules } from "../middleware/ProductValidator.js";
 import {
   getProducts,
   createProduct,

@@ -1,7 +1,7 @@
 import express from "express";
 import { verifyToken } from "../middleware/verifyToken.js";
 import { validate } from "../middleware/Validate.js";
-import { addressRules } from "../Validator/AddressValidator.js";
+import { addressRules } from "../middleware/AddressValidator.js";
 import {
   getMyAddresses,
   createAddress,

@@ -131,3 +131,20 @@ export const setPrimaryAddress = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getAddressById = async (req, res, next) => {
+  try {
+    const address = await Address.findOne({
+      where: {
+        id: req.params.id,
+        userId: req.account.id,
+      },
+    });
+    if (!address)
+      return res.status(404).json({ msg: "Alamat tidak ditemukan" });
+
+    res.status(200).json(address);
+  } catch (error) {
+    next(error);
+  }
+};

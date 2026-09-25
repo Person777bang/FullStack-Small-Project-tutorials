@@ -1,0 +1,403 @@
+/* ==========================================================================
+   1. FONTS & CSS VARIABLES
+   ========================================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
+
+:root {
+  --cream-bg: #f7f2e9;
+  --cream-card: #fffdf8;
+  --gold-accent: #b08d57;
+  --gold-dark: #8a6d3f;
+  --gold-light: rgba(176, 141, 87, 0.12);
+
+  --ink: #2e2a24;
+  --ink-soft: #6b6357;
+  --border-soft: #e5dcc8;
+
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+  --success: #16a34a;
+  --warning: #d97706;
+
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ==========================================================================
+   2. GLOBAL BASE STYLES & RESETS
+   ========================================================================== */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: var(--cream-bg);
+  background-image:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(176, 141, 87, 0.06) 0%,
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(176, 141, 87, 0.05) 0%,
+      transparent 45%
+    );
+  font-family: var(--font-sans);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--gold-dark);
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+a:hover {
+  color: var(--gold-accent);
+}
+
+/* ==========================================================================
+   3. TYPOGRAPHY & HEADINGS
+   ========================================================================== */
+.page-title,
+.title.page-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 2.2rem;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+  margin-bottom: 1.5rem;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.title {
+  color: var(--ink) !important;
+  font-family: var(--font-sans);
+}
+
+.subtitle {
+  color: var(--ink-soft) !important;
+}
+
+/* ==========================================================================
+   4. LAYOUTS & CONTAINERS
+   ========================================================================== */
+.card-container {
+  background: var(--cream-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  padding: 2rem 2.2rem;
+  box-shadow: 0 8px 30px rgba(46, 42, 36, 0.06);
+}
+
+/* Override Bulma Card */
+.card {
+  background-color: var(--cream-card) !important;
+  border: 1px solid var(--border-soft) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(46, 42, 36, 0.05) !important;
+}
+
+/* Navbar & Sidebar Styling */
+.navbar,
+.aside.menu {
+  background-color: var(--cream-card) !important;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.menu-label {
+  color: var(--ink-soft) !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.menu-list a {
+  color: var(--ink) !important;
+  border-radius: 6px;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.menu-list a:hover,
+.menu-list a.is-active {
+  background-color: var(--gold-light) !important;
+  color: var(--gold-dark) !important;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   5. FORM CONTROLS & INPUTS
+   ========================================================================== */
+.label {
+  color: var(--ink) !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+}
+
+.input,
+.textarea,
+.select select {
+  background-color: #ffffff !important;
+  border: 1px solid var(--border-soft) !important;
+  color: var(--ink) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--ink-soft) !important;
+  opacity: 0.7;
+}
+
+.input:focus,
+.textarea:focus,
+.select select:focus {
+  border-color: var(--gold-accent) !important;
+  box-shadow: 0 0 0 3px rgba(176, 141, 87, 0.2) !important;
+}
+
+.search-input-compact {
+  width: 240px;
+  background-color: #ffffff !important;
+  border: 1px solid var(--border-soft) !important;
+  color: var(--ink) !important;
+  border-radius: 8px !important;
+}
+
+.search-input-compact::placeholder {
+  color: var(--ink-soft);
+}
+
+.search-input-compact:focus {
+  border-color: var(--gold-accent) !important;
+  box-shadow: 0 0 0 2px rgba(176, 141, 87, 0.15) !important;
+}
+
+/* ==========================================================================
+   6. BUTTONS & ACTIONS
+   ========================================================================== */
+.btn-luxury,
+.button.is-primary {
+  background: var(--gold-accent) !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  border-radius: 8px !important;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease !important;
+}
+
+.btn-luxury:hover,
+.button.is-primary:hover {
+  background: var(--gold-dark) !important;
+  color: #ffffff !important;
+}
+
+.btn-outline-luxury {
+  background: transparent !important;
+  border: 1.5px solid var(--gold-accent) !important;
+  color: var(--gold-dark) !important;
+  border-radius: 8px !important;
+  font-weight: 500;
+  transition: all 0.2s ease !important;
+}
+
+.btn-outline-luxury:hover {
+  background: var(--gold-accent) !important;
+  color: #ffffff !important;
+}
+
+.btn-danger,
+.button.is-danger {
+  background-color: var(--danger) !important;
+  border: none !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+}
+
+.btn-danger:hover,
+.button.is-danger:hover {
+  background-color: var(--danger-hover) !important;
+}
+
+.action-btn {
+  border-radius: 6px !important;
+  font-size: 0.8rem !important;
+  padding: 0.4rem 0.8rem !important;
+  height: auto !important;
+}
+
+/* ==========================================================================
+   7. TABLES (Bulma & Custom Luxury)
+   ========================================================================== */
+.table,
+.table-luxury {
+  background: transparent !important;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table th,
+.table-luxury thead th {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--ink-soft) !important;
+  border-bottom: 2px solid var(--gold-accent) !important;
+  padding-bottom: 0.9rem;
+  background: transparent !important;
+}
+
+.table tbody tr,
+.table-luxury tbody tr {
+  transition: background 0.15s ease;
+}
+
+.table tbody tr:hover,
+.table-luxury tbody tr:hover {
+  background: rgba(176, 141, 87, 0.06) !important;
+}
+
+.table td,
+.table-luxury tbody td {
+  padding: 0.9rem 0.75rem;
+  border-bottom: 1px solid var(--border-soft) !important;
+  color: var(--ink) !important;
+  vertical-align: middle;
+}
+
+/* ==========================================================================
+   8. ADDRESS GRID & CARDS
+   ========================================================================== */
+.address-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+.address-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 6px rgba(46, 42, 36, 0.04);
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.address-card:hover {
+  box-shadow: 0 6px 16px rgba(46, 42, 36, 0.08);
+}
+
+.address-card-active {
+  border-color: var(--gold-accent);
+  background: #fdf9f2;
+}
+
+.address-badge {
+  position: absolute;
+  top: -10px;
+  right: 12px;
+  background: var(--gold-accent);
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.5px;
+}
+
+.address-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  color: var(--ink);
+}
+
+.address-name {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  margin-bottom: 0.5rem;
+}
+
+.address-detail {
+  font-size: 0.9rem;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.address-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 1rem;
+}
+
+/* ==========================================================================
+   9. PAGINATION & NOTIFICATIONS
+   ========================================================================== */
+.pagination-link,
+.pagination-previous,
+.pagination-next {
+  background-color: #ffffff !important;
+  border: 1px solid var(--border-soft) !important;
+  color: var(--ink) !important;
+  border-radius: 6px !important;
+}
+
+.pagination-link.is-current {
+  background-color: var(--gold-accent) !important;
+  border-color: var(--gold-accent) !important;
+  color: #ffffff !important;
+}
+
+.notification {
+  border-radius: 8px !important;
+}
+
+.notification.is-danger {
+  background-color: #fef2f2 !important;
+  color: var(--danger) !important;
+  border: 1px solid #fecaca;
+}
+
+/* ==========================================================================
+   10. UTILITIES
+   ========================================================================== */
+.gap-1 {
+  gap: 0.25rem !important;
+}
+.gap-2 {
+  gap: 0.5rem !important;
+}
+.gap-3 {
+  gap: 1rem !important;
+}
+.gap-4 {
+  gap: 1.5rem !important;
+}

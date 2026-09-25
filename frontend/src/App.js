@@ -1,14 +1,26 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import UserList from "./components/UserList";
-import AddUser from "./components/addUser";
-import EditUser from "./components/EditUser";
-import AddProduct from "./components/AddProduct";
-import ProductList from "./components/ProductList";
-import AddAddress from "./components/AddAddress";
-import AddressList from "./components/AddressList";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import PrivateRoute from "./components/PrivateRoute";
+
+// User Pages
+import { UserList } from "./pages/user/UserList";
+import { AddUser } from "./pages/user/AddUser";
+import { EditUser } from "./pages/user/EditUser";
+
+// Product Pages
+import { ProductList } from "./pages/product/ProductList";
+import { AddProduct } from "./pages/product/AddProduct";
+import { EditProduct } from "./pages/product/EditProduct";
+
+// Address Pages
+import { AddressList } from "./pages/address/AddressList";
+import { AddAddress } from "./pages/address/AddAddress";
+import { EditAddress } from "./pages/address/EditAddress";
+
+// Auth Pages
+import { Login } from "./pages/login/Login";
+import { Register } from "./pages/register/Register";
+
+// Routes Guard
+import PrivateRoute from "./routes/PrivateRoute";
 
 function App() {
   return (
@@ -18,7 +30,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Halaman yang wajib login dulu */}
+        {/* Halaman User (Protected) */}
         <Route
           path="/"
           element={
@@ -36,13 +48,15 @@ function App() {
           }
         />
         <Route
-          path="edit/:id"
+          path="/edit/:id"
           element={
             <PrivateRoute>
               <EditUser />
             </PrivateRoute>
           }
         />
+
+        {/* Halaman Product (Protected) */}
         <Route
           path="/products"
           element={
@@ -60,6 +74,16 @@ function App() {
           }
         />
         <Route
+          path="/products/edit/:id"
+          element={
+            <PrivateRoute>
+              <EditProduct />
+            </PrivateRoute>
+          }
+        />
+
+        {/* Halaman Address (Protected) */}
+        <Route
           path="/addresses"
           element={
             <PrivateRoute>
@@ -72,6 +96,14 @@ function App() {
           element={
             <PrivateRoute>
               <AddAddress />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/addresses/edit/:id"
+          element={
+            <PrivateRoute>
+              <EditAddress />
             </PrivateRoute>
           }
         />

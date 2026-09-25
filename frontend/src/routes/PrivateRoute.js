@@ -5,6 +5,7 @@ const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem("token");
 
   if (!token) {
+    // Jika tidak ada token, arahkan kembali ke halaman login
     return <Navigate to="/login" replace />;
   }
 

@@ -25,6 +25,7 @@ app.get("/", (req, res) => {
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(UserRoute);
 app.use(ProductRoute);
 app.use(AuthRoute);
@@ -35,4 +36,8 @@ app.use((error, req, res, next) => {
   res.status(500).json({ msg: "Terjadi kesalahan pada server" });
 });
 
-app.listen(5000, () => console.log("Server dijalankan..."));
+if (!process.env.VERCEL) {
+  app.listen(PORT, () =>
+    console.log(`Server up and running on port ${PORT}...`),
+  );
+}

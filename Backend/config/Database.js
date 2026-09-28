@@ -2,6 +2,8 @@ import { Sequelize } from "sequelize";
 import mysql2 from "mysql2";
 import dotenv from "dotenv";
 
+dotenv.config();
+
 const dbName = process.env.DB_NAME;
 const dbUser = process.env.DB_USER;
 const dbPass = process.env.DB_PASS;

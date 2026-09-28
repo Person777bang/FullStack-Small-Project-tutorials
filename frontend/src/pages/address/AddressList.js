@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 
 import { getAddresses, deleteAddress } from "../../service/addressService";
@@ -9,6 +9,8 @@ import { SearchInput } from "../../components/molecules/SearchInput";
 import { Pagination } from "../../components/molecules/Pagination";
 import { Button } from "../../components/atoms/Button";
 
+const ITEMS_PER_PAGE = 10; // di luar komponen, jadi bukan dependency
+
 export const AddressList = () => {
   const [addresses, setAddresses] = useState([]);
   const [search, setSearch] = useState("");
@@ -16,20 +18,11 @@ export const AddressList = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10;
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      fetchAddresses();
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [search, currentPage]);
-
-  const fetchAddresses = async () => {
+  const fetchAddresses = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await getAddresses(search, currentPage, itemsPerPage);
+      const data = await getAddresses(search, currentPage, ITEMS_PER_PAGE);
 
       // Ekstraksi data agar dipastikan berbentuk Array
       if (data && Array.isArray(data.addresses)) {
@@ -53,7 +46,15 @@ export const AddressList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, currentPage]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchAddresses();
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [fetchAddresses]);
 
   const handleDeleteAddress = async (id) => {
     try {
@@ -66,7 +67,7 @@ export const AddressList = () => {
 
   // Safe Guard: Memastikan data berbentuk Array sebelum dirender
   const addressList = Array.isArray(addresses) ? addresses : [];
-  const startIndex = (currentPage - 1) * itemsPerPage;
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 
   return (
     <DashboardLayout title="Daftar Alamat">
@@ -88,7 +89,7 @@ export const AddressList = () => {
             setSearch(e.target.value);
             setCurrentPage(1);
           }}
-          placeholder="Cari jalan, kota, atau provinsi..."
+          placeholder="Cari label, nama penerima, atau kota..."
         />
       </div>
 

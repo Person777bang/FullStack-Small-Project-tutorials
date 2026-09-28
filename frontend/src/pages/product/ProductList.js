@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 
 import { getProducts, deleteProduct } from "../../service/productService";
@@ -9,6 +9,8 @@ import { SearchInput } from "../../components/molecules/SearchInput";
 import { Pagination } from "../../components/molecules/Pagination";
 import { Button } from "../../components/atoms/Button";
 
+const ITEMS_PER_PAGE = 10; // di luar komponen, jadi bukan dependency
+
 export const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
@@ -16,20 +18,11 @@ export const ProductList = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10;
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      fetchProducts();
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [search, currentPage]);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await getProducts(search, currentPage, itemsPerPage);
+      const data = await getProducts(search, currentPage, ITEMS_PER_PAGE);
 
       // Ekstraksi data agar dipastikan berbentuk Array
       if (data && Array.isArray(data.products)) {
@@ -53,7 +46,15 @@ export const ProductList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, currentPage]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchProducts();
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [fetchProducts]);
 
   const handleDeleteProduct = async (id) => {
     try {
@@ -66,7 +67,7 @@ export const ProductList = () => {
 
   // Safe Guard: Memastikan data berbentuk Array sebelum dirender
   const productList = Array.isArray(products) ? products : [];
-  const startIndex = (currentPage - 1) * itemsPerPage;
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 
   return (
     <DashboardLayout title="Daftar Produk">

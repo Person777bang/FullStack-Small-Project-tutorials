@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 // Import service
@@ -18,11 +18,7 @@ export const EditUser = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  useEffect(() => {
-    fetchUserById();
-  }, [id]);
-
-  const fetchUserById = async () => {
+  const fetchUserById = useCallback(async () => {
     try {
       const data = await getUserById(id);
       setName(data.name || "");
@@ -30,7 +26,11 @@ export const EditUser = () => {
     } catch (error) {
       if (error.response) setMsg(error.response.data.msg);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchUserById();
+  }, [fetchUserById]);
 
   const handleUpdateUser = async (e) => {
     e.preventDefault();

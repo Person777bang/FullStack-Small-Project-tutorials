@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 
 import { getUsers, deleteUser } from "../../service/userService";
@@ -9,6 +9,8 @@ import { SearchInput } from "../../components/molecules/SearchInput";
 import { Pagination } from "../../components/molecules/Pagination";
 import { Button } from "../../components/atoms/Button";
 
+const ITEMS_PER_PAGE = 10; // di luar komponen, jadi bukan dependency
+
 export const UserList = () => {
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
@@ -16,23 +18,13 @@ export const UserList = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 10;
 
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      fetchUsers();
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [search, currentPage]);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      // Mengirimkan search, page, dan limit ke service
-      const data = await getUsers(search, currentPage, itemsPerPage);
+      // sesuaikan argumen dengan fungsi getUsers di userService kamu
+      const data = await getUsers(search, currentPage, ITEMS_PER_PAGE);
 
-      // Mengekstrak array users dan totalPages dari response backend
       if (data && Array.isArray(data.users)) {
         setUsers(data.users);
         setTotalPages(data.totalPages || 1);
@@ -53,7 +45,14 @@ export const UserList = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, currentPage]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      fetchUsers();
+    }, 300);
+    return () => clearTimeout(delayDebounceFn);
+  }, [fetchUsers]);
 
   const handleDeleteUser = async (id) => {
     try {
@@ -64,7 +63,7 @@ export const UserList = () => {
     }
   };
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
 
   return (
     <DashboardLayout title="Daftar Pengguna">
@@ -84,7 +83,7 @@ export const UserList = () => {
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
-            setCurrentPage(1); // Reset ke halaman 1 saat mencari
+            setCurrentPage(1);
           }}
           placeholder="Cari nama atau email..."
         />

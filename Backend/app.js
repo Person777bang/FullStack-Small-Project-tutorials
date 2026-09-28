@@ -3,15 +3,25 @@ import cors from "cors";
 import UserRoute from "./routes/UserRoute.js";
 import ProductRoute from "./routes/ProductRoute.js";
 import AuthRoute from "./routes/AuthRoute.js";
-import "dotenv/config";
+import dotenv from "dotenv";
 import AddressRoute from "./routes/AddressRoute.js";
 import db from "./config/Database.js";
+
+dotenv.config();
+
+const app = express();
 
 (async () => {
   await db.sync({ alter: true });
 })();
 
-const app = express();
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "success",
+    message: "healthy",
+    timestamp: new Date().toISOString(),
+  });
+});
 
 app.use(cors());
 app.use(express.json());

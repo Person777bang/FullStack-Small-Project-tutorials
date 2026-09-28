@@ -3,12 +3,9 @@ import cors from "cors";
 import UserRoute from "./routes/UserRoute.js";
 import ProductRoute from "./routes/ProductRoute.js";
 import AuthRoute from "./routes/AuthRoute.js";
-import Account from "./model/AccountModel.js";
-import db from "./config/Database.js";
 import "dotenv/config";
-import User from "./model/UserModel.js";
-import Address from "./model/Address.js";
 import AddressRoute from "./routes/AddressRoute.js";
+import db from "./config/Database.js";
 
 (async () => {
   await db.sync({ alter: true });

@@ -24,7 +24,13 @@ export const Register = () => {
     setMsg("");
 
     try {
-      await registerUser({ name, email, password, confPassword });
+      // Mengubah key payload 'confPassword' menjadi 'confirmPassword'
+      await registerUser({
+        name,
+        email,
+        password,
+        confirmPassword: confPassword,
+      });
       navigate("/login");
     } catch (error) {
       if (error.response) {

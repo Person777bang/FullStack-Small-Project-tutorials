@@ -28,4 +28,4 @@ app.use((error, req, res, next) => {
   res.status(500).json({ msg: "Terjadi kesalahan pada server" });
 });
 
-app.listen(5000, () => console.log("Server up and running..."));
+app.listen(5000, () => console.log("Server dijalankan..."));

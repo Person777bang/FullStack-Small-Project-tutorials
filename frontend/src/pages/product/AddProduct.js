@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { createProduct } from "../../service/productService";
+import { createProduct, getCategories } from "../../service/productService";
 import { DashboardLayout } from "../../components/templates/DashboardLayout";
 import { Button } from "../../components/atoms/Button";
 
@@ -20,13 +19,10 @@ export const AddProduct = () => {
     fetchCategories();
   }, []);
 
-  // Mengambil daftar kategori dari backend
   const fetchCategories = async () => {
     try {
-      const response = await axios.get(
-        "https://full-stack-small-project-tutorials-nine.vercel.app/categories",
-      );
-      setCategories(response.data);
+      const data = await getCategories();
+      setCategories(data);
     } catch (error) {
       console.error("Gagal mengambil data kategori:", error);
     }
@@ -40,7 +36,7 @@ export const AddProduct = () => {
         price: Number(price),
         stock: Number(stock),
         description,
-        categoryId: Number(categoryId), // Menyertakan categoryId
+        categoryId: Number(categoryId),
       });
       navigate("/products");
     } catch (error) {
@@ -57,7 +53,6 @@ export const AddProduct = () => {
         {msg && <p className="has-text-danger mb-4">{msg}</p>}
 
         <form onSubmit={saveProduct}>
-          {/* DROPDOWN KATEGORI */}
           <div className="field mb-3">
             <label className="label is-size-7">KATEGORI *</label>
             <div className="control">
@@ -70,7 +65,7 @@ export const AddProduct = () => {
                   <option value="">-- Pilih Kategori --</option>
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.id}>
-                      {cat.name || cat.category_name}
+                      {cat.name}
                     </option>
                   ))}
                 </select>

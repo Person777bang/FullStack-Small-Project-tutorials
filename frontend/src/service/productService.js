@@ -12,7 +12,7 @@ export const getProductById = async (id) => {
   return response.data;
 };
 
-// TAMBAHKAN FUNGSI INI
+// Mengambil daftar kategori
 export const getCategories = async () => {
   const response = await api.get("/categories");
   return response.data;

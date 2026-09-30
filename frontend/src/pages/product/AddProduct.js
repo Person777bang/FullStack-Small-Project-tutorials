@@ -12,6 +12,7 @@ export const AddProduct = () => {
   const [categoryId, setCategoryId] = useState("");
   const [categories, setCategories] = useState([]);
   const [msg, setMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -22,14 +23,25 @@ export const AddProduct = () => {
   const fetchCategories = async () => {
     try {
       const data = await getCategories();
-      setCategories(data);
+      // Mengantisipasi response array langsung atau pembungkusan di dalam object
+      const list = Array.isArray(data) ? data : data?.categories || [];
+      setCategories(list);
     } catch (error) {
       console.error("Gagal mengambil data kategori:", error);
+      setMsg("Gagal memuat daftar kategori.");
     }
   };
 
   const saveProduct = async (e) => {
     e.preventDefault();
+    setMsg("");
+
+    if (!categoryId) {
+      setMsg("Silakan pilih kategori terlebih dahulu.");
+      return;
+    }
+
+    setIsLoading(true);
     try {
       await createProduct({
         name,
@@ -40,9 +52,13 @@ export const AddProduct = () => {
       });
       navigate("/products");
     } catch (error) {
-      if (error.response) {
-        setMsg(error.response.data.msg);
+      if (error.response && error.response.data) {
+        setMsg(error.response.data.msg || "Gagal menyimpan produk");
+      } else {
+        setMsg("Terjadi kesalahan pada server");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -53,6 +69,7 @@ export const AddProduct = () => {
         {msg && <p className="has-text-danger mb-4">{msg}</p>}
 
         <form onSubmit={saveProduct}>
+          {/* DROPDOWN KATEGORI */}
           <div className="field mb-3">
             <label className="label is-size-7">KATEGORI *</label>
             <div className="control">
@@ -65,7 +82,10 @@ export const AddProduct = () => {
                   <option value="">-- Pilih Kategori --</option>
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.id}>
-                      {cat.name}
+                      {cat.name ||
+                        cat.category_name ||
+                        cat.nama_kategori ||
+                        `Kategori #${cat.id}`}
                     </option>
                   ))}
                 </select>
@@ -135,8 +155,8 @@ export const AddProduct = () => {
             >
               Batal
             </Button>
-            <Button type="submit" variant="primary">
-              Simpan
+            <Button type="submit" variant="primary" disabled={isLoading}>
+              {isLoading ? "Menyimpan..." : "Simpan"}
             </Button>
           </div>
         </form>

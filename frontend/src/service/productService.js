@@ -12,6 +12,12 @@ export const getProductById = async (id) => {
   return response.data;
 };
 
+// TAMBAHKAN FUNGSI INI
+export const getCategories = async () => {
+  const response = await api.get("/categories");
+  return response.data;
+};
+
 export const createProduct = async (data) => {
   const response = await api.post("/products", data);
   return response.data;

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { createProduct } from "../../service/productService";
 import { DashboardLayout } from "../../components/templates/DashboardLayout";
 import { Button } from "../../components/atoms/Button";
@@ -9,9 +10,27 @@ export const AddProduct = () => {
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [description, setDescription] = useState("");
+  const [categoryId, setCategoryId] = useState("");
+  const [categories, setCategories] = useState([]);
   const [msg, setMsg] = useState("");
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  // Mengambil daftar kategori dari backend
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(
+        "https://full-stack-small-project-tutorials-nine.vercel.app/categories",
+      );
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Gagal mengambil data kategori:", error);
+    }
+  };
 
   const saveProduct = async (e) => {
     e.preventDefault();
@@ -21,6 +40,7 @@ export const AddProduct = () => {
         price: Number(price),
         stock: Number(stock),
         description,
+        categoryId: Number(categoryId), // Menyertakan categoryId
       });
       navigate("/products");
     } catch (error) {
@@ -37,6 +57,27 @@ export const AddProduct = () => {
         {msg && <p className="has-text-danger mb-4">{msg}</p>}
 
         <form onSubmit={saveProduct}>
+          {/* DROPDOWN KATEGORI */}
+          <div className="field mb-3">
+            <label className="label is-size-7">KATEGORI *</label>
+            <div className="control">
+              <div className="select is-fullwidth">
+                <select
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(e.target.value)}
+                  required
+                >
+                  <option value="">-- Pilih Kategori --</option>
+                  {categories.map((cat) => (
+                    <option key={cat.id} value={cat.id}>
+                      {cat.name || cat.category_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+
           <div className="field mb-3">
             <label className="label is-size-7">NAMA PRODUK *</label>
             <div className="control">

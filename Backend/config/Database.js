@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const dbName = process.env.DB_NAME;
+console.log("DEBUG - DB_NAME terbaca sebagai:", dbName);
 const dbUser = process.env.DB_USER;
 const dbPass = process.env.DB_PASS;
 const dbHost = process.env.DB_HOST;

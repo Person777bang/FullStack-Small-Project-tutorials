@@ -11,6 +11,8 @@ export const AddProduct = () => {
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [categories, setCategories] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [previews, setPreviews] = useState([]);
   const [msg, setMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -23,13 +25,25 @@ export const AddProduct = () => {
   const fetchCategories = async () => {
     try {
       const data = await getCategories();
-      // Mengantisipasi response array langsung atau pembungkusan di dalam object
       const list = Array.isArray(data) ? data : data?.categories || [];
       setCategories(list);
     } catch (error) {
       console.error("Gagal mengambil data kategori:", error);
       setMsg("Gagal memuat daftar kategori.");
     }
+  };
+
+  // HANDLER UNTUK UPLOAD BANYAK GAMBAR / SINGLE GAMBAR
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    setSelectedFiles(files);
+
+    // Hapus blob URL lama agar memory terbebaskan
+    previews.forEach((url) => URL.revokeObjectURL(url));
+
+    // Buat URL preview sementara untuk gambar yang baru dipilih
+    const filePreviews = files.map((file) => URL.createObjectURL(file));
+    setPreviews(filePreviews);
   };
 
   const saveProduct = async (e) => {
@@ -41,15 +55,22 @@ export const AddProduct = () => {
       return;
     }
 
+    // MEMBUAT FORM DATA UNTUK MENGIRIM FILE DENGAN MULTER
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("price", Number(price));
+    formData.append("stock", Number(stock));
+    formData.append("description", description);
+    formData.append("categoryId", Number(categoryId));
+
+    // Tambahkan file ke key 'images' (sesuai backend Multer upload.array("images", 5))
+    selectedFiles.forEach((file) => {
+      formData.append("images", file);
+    });
+
     setIsLoading(true);
     try {
-      await createProduct({
-        name,
-        price: Number(price),
-        stock: Number(stock),
-        description,
-        categoryId: Number(categoryId),
-      });
+      await createProduct(formData);
       navigate("/products");
     } catch (error) {
       if (error.response && error.response.data) {
@@ -69,6 +90,51 @@ export const AddProduct = () => {
         {msg && <p className="has-text-danger mb-4">{msg}</p>}
 
         <form onSubmit={saveProduct}>
+          {/* UPLOAD FOTO PRODUK (SINGLE / MULTIPLE) */}
+          <div className="field mb-3">
+            <label className="label is-size-7">
+              FOTO PRODUK (BISA SINGLE / MULTIPLE)
+            </label>
+            <div className="control">
+              <input
+                type="file"
+                className="input"
+                multiple
+                accept="image/png, image/jpeg, image/jpg, image/webp"
+                onChange={handleImageChange}
+              />
+            </div>
+            <p className="help">
+              Pilih 1 atau beberapa foto sekaligus (JPG, PNG, WEBP)
+            </p>
+          </div>
+
+          {/* PREVIEW GAMBAR */}
+          {previews.length > 0 && (
+            <div className="field mb-3">
+              <label className="label is-size-7">PREVIEW FOTO</label>
+              <div
+                className="is-flex gap-2"
+                style={{ overflowX: "auto", paddingBottom: "5px" }}
+              >
+                {previews.map((src, idx) => (
+                  <img
+                    key={idx}
+                    src={src}
+                    alt={`Preview ${idx + 1}`}
+                    style={{
+                      width: "80px",
+                      height: "80px",
+                      objectFit: "cover",
+                      borderRadius: "6px",
+                      border: "1px solid #ddd",
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* DROPDOWN KATEGORI */}
           <div className="field mb-3">
             <label className="label is-size-7">KATEGORI *</label>
@@ -93,6 +159,7 @@ export const AddProduct = () => {
             </div>
           </div>
 
+          {/* NAMA PRODUK */}
           <div className="field mb-3">
             <label className="label is-size-7">NAMA PRODUK *</label>
             <div className="control">
@@ -107,6 +174,7 @@ export const AddProduct = () => {
             </div>
           </div>
 
+          {/* HARGA */}
           <div className="field mb-3">
             <label className="label is-size-7">HARGA (RP) *</label>
             <div className="control">
@@ -121,6 +189,7 @@ export const AddProduct = () => {
             </div>
           </div>
 
+          {/* STOK */}
           <div className="field mb-3">
             <label className="label is-size-7">STOK *</label>
             <div className="control">
@@ -135,6 +204,7 @@ export const AddProduct = () => {
             </div>
           </div>
 
+          {/* DESKRIPSI */}
           <div className="field mb-4">
             <label className="label is-size-7">DESKRIPSI</label>
             <div className="control">
@@ -147,6 +217,7 @@ export const AddProduct = () => {
             </div>
           </div>
 
+          {/* TOMBOL AKSI */}
           <div className="is-flex is-justify-content-flex-end gap-2">
             <Button
               type="button"

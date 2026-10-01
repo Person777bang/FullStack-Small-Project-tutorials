@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux"; // 1. Import Redux selector (atau AuthContext kamu)
 
 import { getProducts, deleteProduct } from "../../service/productService";
 
@@ -20,13 +21,15 @@ export const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  // 2. Ambil data user yang sedang login dari State Auth / Redux
+  const { user } = useSelector((state) => state.auth) || {};
+
   // Ambil data produk dari backend
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
       const data = await getProducts(search, currentPage, ITEMS_PER_PAGE);
 
-      // Normalisasi format response backend
       if (data && Array.isArray(data.products)) {
         setProducts(data.products);
         setTotalPages(data.totalPages || 1);
@@ -51,7 +54,6 @@ export const ProductList = () => {
     }
   }, [search, currentPage]);
 
-  // Debounce fetching saat mengisi input pencarian
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       fetchProducts();
@@ -60,7 +62,6 @@ export const ProductList = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [fetchProducts]);
 
-  // Handler Hapus Produk
   const handleDeleteProduct = async (id) => {
     if (!window.confirm("Apakah Anda yakin ingin menghapus produk ini?"))
       return;
@@ -77,7 +78,7 @@ export const ProductList = () => {
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
-    setCurrentPage(1); // Reset ke halaman 1 saat pencarian berubah
+    setCurrentPage(1);
   };
 
   return (
@@ -123,6 +124,7 @@ export const ProductList = () => {
               <ProductCard
                 key={item.id}
                 product={item}
+                user={user} // 3. Passing prop 'user' ke ProductCard
                 apiBaseUrl={API_BASE_URL}
                 onDelete={handleDeleteProduct}
               />

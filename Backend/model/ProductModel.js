@@ -12,16 +12,22 @@ const Product = db.define(
     price: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      validate: {
-        min: 0,
-      },
     },
     stock: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      validate: {
-        min: 0,
-      },
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    images: {
+      type: DataTypes.TEXT,
+      allowNull: true,
     },
     url: {
       type: DataTypes.STRING,

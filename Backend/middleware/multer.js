@@ -2,20 +2,28 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-const uploadDir = "./public/images";
+// Cek apakah server berjalan di Vercel
+const IS_VERCEL = process.env.VERCEL;
+
+const uploadDir = IS_VERCEL ? "/tmp" : "./public/images";
+
+// Buat folder lokal jika belum ada (Di Vercel hanya diizinkan di /tmp)
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  },
-});
+// Gunakan memoryStorage untuk Vercel, diskStorage untuk Lokal
+const storage = IS_VERCEL
+  ? multer.memoryStorage()
+  : multer.diskStorage({
+      destination: (req, file, cb) => {
+        cb(null, uploadDir);
+      },
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+      },
+    });
 
 const fileFilter = (req, file, cb) => {
   const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];

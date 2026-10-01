@@ -214,7 +214,7 @@ export const ProductList = () => {
                       </strong>
                     </p>
 
-                    {/* TOMBOL EDIT & HAPUS */}
+                    {}
                     <div
                       style={{ marginTop: "auto" }}
                       className="is-flex gap-2"

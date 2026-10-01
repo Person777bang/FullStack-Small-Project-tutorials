@@ -2,12 +2,11 @@ import { DataTypes } from "sequelize";
 import db from "../config/Database.js";
 
 const ProductCategory = db.define(
-  "ProductCategories",
+  "ProductCategory", // atau "ProductCategories" sesuaikan dengan nama tabel di phpMyAdmin/MySQL
   {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: "unique_category_name",
     },
   },
   {

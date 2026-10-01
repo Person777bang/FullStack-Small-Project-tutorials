@@ -4,7 +4,7 @@ import { Button } from "../atoms/Button";
 
 const DEFAULT_IMAGE = "https://via.placeholder.com/300x200?text=No+Image";
 
-export const ProductCard = ({ product, apiBaseUrl, onDelete }) => {
+export const ProductCard = ({ product, user, apiBaseUrl, onDelete }) => {
   // Resolusi URL Gambar
   const imageUrl = product.image
     ? product.image.startsWith("http")
@@ -12,9 +12,9 @@ export const ProductCard = ({ product, apiBaseUrl, onDelete }) => {
       : `${apiBaseUrl}/images/${product.image}`
     : DEFAULT_IMAGE;
 
-  // Nama Kategori
-  const categoryName =
-    product.ProductCategory?.name || product.category_name || "Umum";
+  // Cek Hak Akses
+  const isAdmin = user?.role === "admin";
+  const isOwner = user?.id === product.userId;
 
   return (
     <div className="column is-12-mobile is-6-tablet is-4-desktop is-3-widescreen">
@@ -30,7 +30,7 @@ export const ProductCard = ({ product, apiBaseUrl, onDelete }) => {
           boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
         }}
       >
-        {/* FOTO PRODUK & BADGE KATEGORI */}
+        {/* GAMBAR PRODUK */}
         <div
           style={{
             position: "relative",
@@ -41,11 +41,7 @@ export const ProductCard = ({ product, apiBaseUrl, onDelete }) => {
           <img
             src={imageUrl}
             alt={product.name}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-            }}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = DEFAULT_IMAGE;
@@ -62,7 +58,7 @@ export const ProductCard = ({ product, apiBaseUrl, onDelete }) => {
               borderRadius: "6px",
             }}
           >
-            {categoryName}
+            {product.ProductCategory?.name || product.category_name || "Umum"}
           </span>
         </div>
 
@@ -76,19 +72,7 @@ export const ProductCard = ({ product, apiBaseUrl, onDelete }) => {
             padding: "1rem",
           }}
         >
-          <h3
-            className="title is-6 mb-1"
-            style={{
-              color: "#1e293b",
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-              minHeight: "2.4em",
-            }}
-          >
-            {product.name}
-          </h3>
+          <h3 className="title is-6 mb-1">{product.name}</h3>
 
           <p className="has-text-weight-bold has-text-primary is-size-6 mb-1">
             Rp {Number(product.price || 0).toLocaleString("id-ID")}
@@ -105,21 +89,32 @@ export const ProductCard = ({ product, apiBaseUrl, onDelete }) => {
             </strong>
           </p>
 
-          {/* ACTION BUTTONS */}
+          {/* ACTION BUTTONS BERDASARKAN HAK AKSES */}
           <div style={{ marginTop: "auto" }} className="is-flex gap-2">
-            <Link to={`/products/edit/${product.id}`} style={{ flex: 1 }}>
-              <Button variant="outline" size="small" style={{ width: "100%" }}>
-                Edit
+            {/* Tombol Edit: Jika Admin ATAU Pemilik Produk */}
+            {(isAdmin || isOwner) && (
+              <Link to={`/products/edit/${product.id}`} style={{ flex: 1 }}>
+                <Button
+                  variant="outline"
+                  size="small"
+                  style={{ width: "100%" }}
+                >
+                  Edit
+                </Button>
+              </Link>
+            )}
+
+            {/* Tombol Hapus: Khusus Admin */}
+            {isAdmin && (
+              <Button
+                variant="danger"
+                size="small"
+                onClick={() => onDelete(product.id)}
+                style={{ flex: 1 }}
+              >
+                Hapus
               </Button>
-            </Link>
-            <Button
-              variant="danger"
-              size="small"
-              onClick={() => onDelete(product.id)}
-              style={{ flex: 1 }}
-            >
-              Hapus
-            </Button>
+            )}
           </div>
         </div>
       </div>

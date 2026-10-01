@@ -86,7 +86,7 @@ export const createProduct = async (req, res, next) => {
 
     const mainImage = imageFiles[0] || null;
 
-    // Generate URL foto lengkap agar gambar muncul di frontend
+    // Generate URL foto lengkap
     const url = mainImage
       ? `${req.protocol}://${req.get("host")}/images/${mainImage}`
       : null;
@@ -100,7 +100,7 @@ export const createProduct = async (req, res, next) => {
       image: mainImage,
       images: JSON.stringify(imageFiles),
       url: url,
-      userId: req.userId, // Menyimpan ID user pembuat produk dari middleware token
+      userId: req.userId, // Menyimpan ID pembuat produk
     });
 
     res.status(201).json({ msg: "Produk berhasil ditambahkan" });
@@ -109,7 +109,7 @@ export const createProduct = async (req, res, next) => {
   }
 };
 
-// 4. Update/Edit Produk (Hanya Pemilik & Admin)
+// 4. Update/Edit Produk (Pemilik Produk & Admin)
 export const updateProduct = async (req, res, next) => {
   try {
     const product = await Product.findOne({ where: { id: req.params.id } });
@@ -118,13 +118,11 @@ export const updateProduct = async (req, res, next) => {
       return res.status(404).json({ msg: "Produk tidak ditemukan" });
     }
 
-    // OTORISASI: Jika BUKAN admin DAN BUKAN pemilik produk -> TOLAK
+    // OTORISASI EDIT: Jika BUKAN admin DAN BUKAN pemilik produk -> TOLAK
     if (req.role !== "admin" && product.userId !== req.userId) {
-      return res
-        .status(403)
-        .json({
-          msg: "Akses ditolak! Anda hanya dapat mengedit produk milik sendiri.",
-        });
+      return res.status(403).json({
+        msg: "Akses ditolak! Anda hanya dapat mengedit produk milik sendiri.",
+      });
     }
 
     const { name, price, stock, description, categoryId } = req.body;
@@ -167,7 +165,7 @@ export const updateProduct = async (req, res, next) => {
   }
 };
 
-// 5. Hapus Produk (Hanya Pemilik & Admin)
+// 5. Hapus Produk (KHUSUS ADMIN)
 export const deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findOne({ where: { id: req.params.id } });
@@ -176,16 +174,13 @@ export const deleteProduct = async (req, res, next) => {
       return res.status(404).json({ msg: "Produk tidak ditemukan" });
     }
 
-    // OTORISASI: Jika BUKAN admin DAN BUKAN pemilik produk -> TOLAK
-    if (req.role !== "admin" && product.userId !== req.userId) {
-      return res
-        .status(403)
-        .json({
-          msg: "Akses ditolak! Anda hanya dapat menghapus produk milik sendiri.",
-        });
+    // OTORISASI HAPUS: Khusus Admin
+    if (req.role !== "admin") {
+      return res.status(403).json({
+        msg: "Akses ditolak! Hanya Admin yang dapat menghapus produk.",
+      });
     }
 
-    // Hapus file gambar dari direktori jika lokal
     if (product.image) {
       const filepath = `./public/images/${product.image}`;
       if (fs.existsSync(filepath)) fs.unlinkSync(filepath);

@@ -1,7 +1,10 @@
 import Product from "../model/ProductModel.js";
 import ProductCategory from "../model/ProductCategoryModel.js";
 import { Op } from "sequelize";
+import fs from "fs";
+import path from "path";
 
+// 1. Dapatkan Semua Produk
 export const getProducts = async (req, res, next) => {
   const search = req.query.search_query || "";
   const page = parseInt(req.query.page) || 1;
@@ -33,9 +36,19 @@ export const getProducts = async (req, res, next) => {
   }
 };
 
+// 2. Dapatkan Detail Produk berdasarkan ID
 export const getProductById = async (req, res, next) => {
   try {
-    const response = await Product.findOne({ where: { id: req.params.id } });
+    const response = await Product.findOne({
+      where: { id: req.params.id },
+      include: [
+        {
+          model: ProductCategory,
+          attributes: ["id", "name"],
+        },
+      ],
+    });
+
     if (!response) {
       return res.status(404).json({ msg: "Produk tidak ditemukan" });
     }
@@ -45,21 +58,22 @@ export const getProductById = async (req, res, next) => {
   }
 };
 
+// 3. Tambah Produk Baru
 export const createProduct = async (req, res, next) => {
   const { name, price, stock, description, categoryId } = req.body;
 
-  // 1. Validasi field wajib
+  // Validasi field wajib
   if (!name || price === undefined || stock === undefined || !categoryId) {
     return res.status(400).json({ msg: "Semua field wajib diisi" });
   }
 
-  // 2. Validasi nilai tidak boleh negatif
+  // Validasi nilai angka
   if (Number(price) < 0 || Number(stock) < 0) {
     return res.status(400).json({ msg: "Harga dan Stok tidak boleh negatif" });
   }
 
   try {
-    // 3. Validasi keberadaan kategori
+    // Validasi kategori
     const category = await ProductCategory.findByPk(categoryId);
     if (!category) {
       return res.status(400).json({ msg: "Kategori tidak valid" });
@@ -70,14 +84,23 @@ export const createProduct = async (req, res, next) => {
       imageFiles = req.files.map((file) => file.filename);
     }
 
+    const mainImage = imageFiles[0] || null;
+
+    // Generate URL foto lengkap agar gambar muncul di frontend
+    const url = mainImage
+      ? `${req.protocol}://${req.get("host")}/images/${mainImage}`
+      : null;
+
     await Product.create({
       name,
       price: Number(price),
       stock: Number(stock),
       description,
       categoryId: Number(categoryId),
-      image: imageFiles[0] || null,
+      image: mainImage,
       images: JSON.stringify(imageFiles),
+      url: url,
+      userId: req.userId, // Menyimpan ID user pembuat produk dari middleware token
     });
 
     res.status(201).json({ msg: "Produk berhasil ditambahkan" });
@@ -86,23 +109,100 @@ export const createProduct = async (req, res, next) => {
   }
 };
 
-export const getCategories = async (req, res, next) => {
+// 4. Update/Edit Produk (Hanya Pemilik & Admin)
+export const updateProduct = async (req, res, next) => {
   try {
-    const categories = await ProductCategory.findAll();
-    res.status(200).json(categories);
+    const product = await Product.findOne({ where: { id: req.params.id } });
+
+    if (!product) {
+      return res.status(404).json({ msg: "Produk tidak ditemukan" });
+    }
+
+    // OTORISASI: Jika BUKAN admin DAN BUKAN pemilik produk -> TOLAK
+    if (req.role !== "admin" && product.userId !== req.userId) {
+      return res
+        .status(403)
+        .json({
+          msg: "Akses ditolak! Anda hanya dapat mengedit produk milik sendiri.",
+        });
+    }
+
+    const { name, price, stock, description, categoryId } = req.body;
+
+    let imageFiles = [];
+    let mainImage = product.image;
+    let url = product.url;
+
+    // Jika ada upload gambar baru
+    if (req.files && req.files.length > 0) {
+      imageFiles = req.files.map((file) => file.filename);
+      mainImage = imageFiles[0];
+      url = `${req.protocol}://${req.get("host")}/images/${mainImage}`;
+
+      // Hapus file gambar lama jika ada
+      if (product.image) {
+        const filepath = `./public/images/${product.image}`;
+        if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
+      }
+    }
+
+    await Product.update(
+      {
+        name: name || product.name,
+        price: price !== undefined ? Number(price) : product.price,
+        stock: stock !== undefined ? Number(stock) : product.stock,
+        description: description || product.description,
+        categoryId: categoryId ? Number(categoryId) : product.categoryId,
+        image: mainImage,
+        images:
+          imageFiles.length > 0 ? JSON.stringify(imageFiles) : product.images,
+        url: url,
+      },
+      { where: { id: product.id } },
+    );
+
+    res.status(200).json({ msg: "Produk berhasil diperbarui" });
   } catch (error) {
     next(error);
   }
 };
 
+// 5. Hapus Produk (Hanya Pemilik & Admin)
 export const deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findOne({ where: { id: req.params.id } });
+
     if (!product) {
       return res.status(404).json({ msg: "Produk tidak ditemukan" });
     }
+
+    // OTORISASI: Jika BUKAN admin DAN BUKAN pemilik produk -> TOLAK
+    if (req.role !== "admin" && product.userId !== req.userId) {
+      return res
+        .status(403)
+        .json({
+          msg: "Akses ditolak! Anda hanya dapat menghapus produk milik sendiri.",
+        });
+    }
+
+    // Hapus file gambar dari direktori jika lokal
+    if (product.image) {
+      const filepath = `./public/images/${product.image}`;
+      if (fs.existsSync(filepath)) fs.unlinkSync(filepath);
+    }
+
     await Product.destroy({ where: { id: req.params.id } });
     res.status(200).json({ msg: "Produk berhasil dihapus" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 6. Dapatkan Daftar Kategori
+export const getCategories = async (req, res, next) => {
+  try {
+    const categories = await ProductCategory.findAll();
+    res.status(200).json(categories);
   } catch (error) {
     next(error);
   }

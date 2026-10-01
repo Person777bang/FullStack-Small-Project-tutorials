@@ -9,6 +9,7 @@ import {
   createProduct,
   getCategories,
   getProductById,
+  updateProduct,
   deleteProduct,
 } from "../Controller/ProductController.js";
 

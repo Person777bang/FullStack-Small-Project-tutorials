@@ -36,6 +36,9 @@ export const getProducts = async (req, res, next) => {
 export const getProductById = async (req, res, next) => {
   try {
     const response = await Product.findOne({ where: { id: req.params.id } });
+    if (!response) {
+      return res.status(404).json({ msg: "Produk tidak ditemukan" });
+    }
     res.status(200).json(response);
   } catch (error) {
     next(error);
@@ -45,47 +48,39 @@ export const getProductById = async (req, res, next) => {
 export const createProduct = async (req, res, next) => {
   const { name, price, stock, description, categoryId } = req.body;
 
+  // 1. Validasi field wajib
   if (!name || price === undefined || stock === undefined || !categoryId) {
-    return res.status(400).json({ msg: "Semua wajib di isi" });
+    return res.status(400).json({ msg: "Semua field wajib diisi" });
   }
 
-  let imageFiles = [];
-  if (req.files && req.files.lenght > 0) {
-    imageFiles = req.files.map((file) => file.filename);
+  // 2. Validasi nilai tidak boleh negatif
+  if (Number(price) < 0 || Number(stock) < 0) {
+    return res.status(400).json({ msg: "Harga dan Stok tidak boleh negatif" });
   }
 
   try {
+    // 3. Validasi keberadaan kategori
+    const category = await ProductCategory.findByPk(categoryId);
+    if (!category) {
+      return res.status(400).json({ msg: "Kategori tidak valid" });
+    }
+
+    let imageFiles = [];
+    if (req.files && req.files.length > 0) {
+      imageFiles = req.files.map((file) => file.filename);
+    }
+
     await Product.create({
       name,
       price: Number(price),
       stock: Number(stock),
       description,
       categoryId: Number(categoryId),
-      // Menyimpan gambar utama (single) dan daftar semua gambar (multiple dalam format stringified JSON)
       image: imageFiles[0] || null,
       images: JSON.stringify(imageFiles),
     });
 
     res.status(201).json({ msg: "Produk berhasil ditambahkan" });
-  } catch (error) {
-    next(error);
-  }
-};
-  
-  if (price < 0 || stock < 0) {
-    return res.status(400).json({ msg: "Maaf Tidak Boleh Negatif" });
-  }
-
-  try {
-    const category = await ProductCategory.findOne({
-      where: { id: categoryId },
-    });
-    if (!category) {
-      return res.status(400).json({ msg: "Category tidak valid" });
-    }
-
-    await Product.create({ name, price, stock, categoryId });
-    res.status(201).json({ msg: "Product berhasil ditambahkan" });
   } catch (error) {
     next(error);
   }
@@ -104,10 +99,10 @@ export const deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findOne({ where: { id: req.params.id } });
     if (!product) {
-      return res.status(404).json({ msg: "Product tidak ditemukan" });
+      return res.status(404).json({ msg: "Produk tidak ditemukan" });
     }
     await Product.destroy({ where: { id: req.params.id } });
-    res.status(200).json({ msg: "Product berhasil dihapus" });
+    res.status(200).json({ msg: "Produk berhasil dihapus" });
   } catch (error) {
     next(error);
   }

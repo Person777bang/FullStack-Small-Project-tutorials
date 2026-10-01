@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux"; // 1. Import Redux selector (atau AuthContext kamu)
 
 import { getProducts, deleteProduct } from "../../service/productService";
 
@@ -21,10 +20,9 @@ export const ProductList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // 2. Ambil data user yang sedang login dari State Auth / Redux
-  const { user } = useSelector((state) => state.auth) || {};
+  // Ambil data user yang sedang login dari localStorage (sesuai pola Login.js)
+  const user = JSON.parse(localStorage.getItem("account")) || {};
 
-  // Ambil data produk dari backend
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
@@ -83,7 +81,6 @@ export const ProductList = () => {
 
   return (
     <DashboardLayout title="Daftar Produk">
-      {/* HEADER PAGE */}
       <div className="mb-5 is-flex is-justify-content-space-between is-align-items-center flex-wrap gap-2">
         <div>
           <h1 className="title is-4 mb-1" style={{ color: "#0F172A" }}>
@@ -100,7 +97,6 @@ export const ProductList = () => {
         </Link>
       </div>
 
-      {/* FILTER / SEARCH */}
       <div className="mb-5 is-flex is-justify-content-flex-end">
         <SearchInput
           value={search}
@@ -109,10 +105,8 @@ export const ProductList = () => {
         />
       </div>
 
-      {/* ALERT MESSAGE */}
       {msg && <p className="has-text-danger mb-4">{msg}</p>}
 
-      {/* PRODUCT GRID / LOADING STATE */}
       {loading ? (
         <div className="has-text-centered my-6">
           <p className="has-text-grey">Memuat data produk...</p>
@@ -124,7 +118,7 @@ export const ProductList = () => {
               <ProductCard
                 key={item.id}
                 product={item}
-                user={user} // 3. Passing prop 'user' ke ProductCard
+                user={user}
                 apiBaseUrl={API_BASE_URL}
                 onDelete={handleDeleteProduct}
               />
@@ -137,7 +131,6 @@ export const ProductList = () => {
         </div>
       )}
 
-      {/* PAGINASI */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

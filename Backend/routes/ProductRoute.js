@@ -2,6 +2,7 @@ import express from "express";
 import { verifyToken } from "../middleware/verifyToken.js";
 import { verifyAdmin } from "../middleware/verifyAdmin.js";
 import { validate } from "../middleware/Validate.js";
+import { upload } from "../middleware/multer.js";
 import { productRules } from "../middleware/ProductValidator.js";
 import {
   getProducts,
@@ -22,6 +23,7 @@ router.post(
   verifyAdmin,
   productRules,
   validate,
+  upload.array("images", 5),
   createProduct,
 );
 router.delete("/products/:id", verifyToken, verifyAdmin, deleteProduct);

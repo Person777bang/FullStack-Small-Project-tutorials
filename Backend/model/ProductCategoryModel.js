@@ -1,8 +1,5 @@
-import { DataTypes } from "sequelize";
-import db from "../config/Database.js";
-
 const ProductCategory = db.define(
-  "ProductCategory", // atau "ProductCategories" sesuaikan dengan nama tabel di phpMyAdmin/MySQL
+  "ProductCategory",
   {
     name: {
       type: DataTypes.STRING,
@@ -10,8 +7,7 @@ const ProductCategory = db.define(
     },
   },
   {
+    tableName: "ProductCategories",
     freezeTableName: true,
   },
 );
-
-export default ProductCategory;

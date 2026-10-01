@@ -17,15 +17,18 @@ const router = express.Router();
 router.get("/products", verifyToken, getProducts);
 router.get("/products/:id", verifyToken, getProductById);
 router.get("/categories", verifyToken, getCategories);
+
+// URUTAN MULTER: upload.array() HARUS sebelum productRules & validate
 router.post(
   "/products",
   verifyToken,
   verifyAdmin,
+  upload.array("images", 5),
   productRules,
   validate,
-  upload.array("images", 5),
   createProduct,
 );
+
 router.delete("/products/:id", verifyToken, verifyAdmin, deleteProduct);
 
 export default router;

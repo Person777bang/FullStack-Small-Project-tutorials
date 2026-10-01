@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
+import dotenv from "dotenv";
 import UserRoute from "./routes/UserRoute.js";
 import ProductRoute from "./routes/ProductRoute.js";
 import AuthRoute from "./routes/AuthRoute.js";
-import dotenv from "dotenv";
 import AddressRoute from "./routes/AddressRoute.js";
 import db from "./config/Database.js";
 
@@ -16,6 +16,13 @@ const PORT = process.env.PORT || 5000;
   await db.sync({ alter: true });
 })();
 
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// PEMBETULAN: express.static dipanggil sebagai fungsi -> express.static("public/images")
+app.use("/images", express.static("public/images"));
+
 app.get("/", (req, res) => {
   res.status(200).json({
     status: "success",
@@ -24,10 +31,6 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use("/images", express.static, "public/images");
 app.use(UserRoute);
 app.use(ProductRoute);
 app.use(AuthRoute);

@@ -43,12 +43,35 @@ export const getProductById = async (req, res, next) => {
 };
 
 export const createProduct = async (req, res, next) => {
-  const { name, price, stock, categoryId } = req.body;
+  const { name, price, stock, description, categoryId } = req.body;
 
   if (!name || price === undefined || stock === undefined || !categoryId) {
     return res.status(400).json({ msg: "Semua wajib di isi" });
   }
 
+  let imageFiles = [];
+  if (req.files && req.files.lenght > 0) {
+    imageFiles = req.files.map((file) => file.filename);
+  }
+
+  try {
+    await Product.create({
+      name,
+      price: Number(price),
+      stock: Number(stock),
+      description,
+      categoryId: Number(categoryId),
+      // Menyimpan gambar utama (single) dan daftar semua gambar (multiple dalam format stringified JSON)
+      image: imageFiles[0] || null,
+      images: JSON.stringify(imageFiles),
+    });
+
+    res.status(201).json({ msg: "Produk berhasil ditambahkan" });
+  } catch (error) {
+    next(error);
+  }
+};
+  
   if (price < 0 || stock < 0) {
     return res.status(400).json({ msg: "Maaf Tidak Boleh Negatif" });
   }

@@ -1,3 +1,6 @@
+import { DataTypes } from "sequelize";
+import db from "../config/Database.js";
+
 const ProductCategory = db.define(
   "ProductCategory",
   {
@@ -11,3 +14,5 @@ const ProductCategory = db.define(
     freezeTableName: true,
   },
 );
+
+export default ProductCategory;

@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Buat instance Axios dengan Base URL backend
 const API = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL,
+  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5000",
 });
 
 // Interceptor: Menyesuaikan header Authorization secara otomatis

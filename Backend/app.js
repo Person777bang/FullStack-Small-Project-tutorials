@@ -36,8 +36,11 @@ app.use(
   cors({
     credentials: true,
     origin: function (origin, callback) {
-      // Izinkan request tanpa origin (seperti Postman/Healthcheck) atau jika origin terdaftar
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app")
+      ) {
         callback(null, true);
       } else {
         callback(new Error("Blocked by CORS policy"));

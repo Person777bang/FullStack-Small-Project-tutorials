@@ -4,7 +4,6 @@ import { Op } from "sequelize";
 import fs from "fs";
 import path from "path";
 
-// 1. Dapatkan Semua Produk
 export const getProducts = async (req, res, next) => {
   const search = req.query.search_query || "";
   const page = parseInt(req.query.page) || 1;
